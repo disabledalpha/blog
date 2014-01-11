@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+  xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
+  <channel>
+    <title>A set of measure zero</title>
+    <link>http://www.darioprandi.com/blog</link>
+    <description>Blogging about stuffs</description>
+    <pubDate>Tue, 07 Jan 2014 08:40:00 -0000</pubDate>
+    <item>
+      <title>Image inpainting video</title>
+      <link>http://www.darioprandi.com/blog/2014/01/07/image-inpainting-video.html</link>
+      <description>&lt;video controls=&quot;&quot;&gt;
+  &lt;source src=&quot;/blog/assets/video/movie1.ogv&quot; type=&quot;video/ogg&quot; /&gt;
+  &lt;source src=&quot;/blog/assets/video/movie1.mp4&quot; type=&quot;video/mp4&quot; /&gt;
+Your browser does not support the video tag.
+&lt;/video&gt;
+
+</description>
+      <pubDate>Tue, 07 Jan 2014 08:40:00 -0000</pubDate>
+      <dc:date>2014-01-07T08:40:00Z</dc:date>
+    </item>
+    <item>
+      <title>(Unfinished) Paper reading - Generalized Fourier Descriptors with Applications to Objects Recognition in SVM Context</title>
+      <link>http://www.darioprandi.com/blog/2014/01/06/paper-reading-I.html</link>
+      <description>&lt;p&gt;
+In this post I collect some notes regarding the reading of &lt;a href=&quot;http://www.lsis.org/gauthierjp/papers/110.pdf&quot;&gt;this paper&lt;/a&gt;.
+&lt;/p&gt;
+
+</description>
+      <pubDate>Mon, 06 Jan 2014 16:40:00 -0000</pubDate>
+      <dc:date>2014-01-06T16:40:00Z</dc:date>
+    </item>
+    <item>
+      <title>Welcome to Jekyll!</title>
+      <link>http://www.darioprandi.com/blog/jekyll/update/2013/11/10/welcome-to-jekyll.html</link>
+      <description>&lt;p&gt;You’ll find this post in your &lt;code&gt;_posts&lt;/code&gt; directory - edit this post and re-build (or run with the &lt;code&gt;-w&lt;/code&gt; switch) to see your changes!
+To add new posts, simply add a file in the &lt;code&gt;_posts&lt;/code&gt; directory that follows the convention: YYYY-MM-DD-name-of-post.ext.&lt;/p&gt;
+
+</description>
+      <pubDate>Sun, 10 Nov 2013 10:18:00 -0000</pubDate>
+      <dc:date>2013-11-10T10:18:00Z</dc:date>
+    </item>
+    <dc:date>2014-01-07T08:40:00Z</dc:date>
+  </channel>
+</rss>

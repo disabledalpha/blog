@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>   
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>A set of measure zero - Blogging about stuffs</title>
+    <meta name="description" content="A set of measure zero, Blogging about stuffs" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+   
+    <link rel="stylesheet" type="text/css" href="/blog//assets/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+    <!-- This is for syntax highlight -->
+    <link rel="stylesheet" type="text/css" href="/blog//assets/css/syntax.css">
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/blog//assets/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    
+    <main class="content" role="main">
+
+    <article class="post">
+        <header class="post-header">
+            <a id="blog-logo" href="/blog/">
+                
+                    <span class="blog-title">A set of measure zero</span>
+                 
+            </a>
+        </header>
+        
+        <span class="post-meta">
+        	<time datetime="2014-01-07">07 Jan 2014</time>
+        	
+       	</span>
+
+        <h1 class="post-title">Image inpainting video</h1>
+
+        <section class="post-content">
+            <video  controls>
+  <source src="/blog/assets/video/movie1.ogv" type="video/ogg">
+  <source src="/blog/assets/video/movie1.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video>
+
+<video  controls>
+  <source src="/blog/assets/video/movie2.ogv" type="video/ogg">
+  <source src="/blog/assets/video/movie2.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video>
+
+<p>
+Once we have a working python program it is quite easy to extract  videos like the above ones.
+We are gonna use matplotlib and ffmpeg. 
+(Surely there exist a lot of better ways than this.)
+</p>
+
+<p>
+First of all we need to import the necessary modules:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #859900; font-weight: bold;">import</span> os
+<span style="color: #859900; font-weight: bold;">import</span> matplotlib.pyplot <span style="color: #859900; font-weight: bold;">as</span> plt
+</pre>
+</div>
+
+<p>
+Now, all we need to do is to save each frame and then run ffmpeg to create the movie.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #859900; font-weight: bold;">for</span> maskStep <span style="color: #859900; font-weight: bold;">in</span> <span style="color: #839496; font-weight: bold;">range</span>(1,TotalMaskings+1):
+   <span style="color: #586e75;"># </span><span style="color: #586e75;">put here the algorithm for the evolution that saves the current step to img_curr</span>
+   plt.imsave(<span style="color: #2aa198;">'_tmp%05d.png'</span>%maskStep, img_curr,cmap = cm.binary) <span style="color: #586e75;"># </span><span style="color: #586e75;">save the frame for the movie</span>
+
+<span style="color: #586e75;"># </span><span style="color: #586e75;">.</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">.  rest of the program</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">.</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">at the end we convert the frames to a movie and cancel all the images</span>
+<span style="color: #268bd2;">FPS</span> = 10
+
+os.system(<span style="color: #2aa198;">"rm movie.mp4"</span>)
+
+os.system(<span style="color: #2aa198;">"ffmpeg -r "</span>+<span style="color: #839496; font-weight: bold;">str</span>(FPS)+<span style="color: #2aa198;">" -b 1800 -i _tmp%05d.png movie.mp4"</span>)
+os.system(<span style="color: #2aa198;">"rm _tmp*.png"</span>)
+</pre>
+</div>
+
+<p>
+A little explication on the syntax:
+</p>
+<ul class="org-ul">
+<li><code>%05d</code> in the file name stands for 5 digits. Namely, the images will be saved as  <code>_tmp00001.png</code>, <code>_tmp00002.png</code>, <code>_tmp00003.png</code>, and so on. 
+</li>
+<li><code>-b 1800</code> in the ffmpeg command stands for bitrate 1800.
+</li>
+</ul>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+        	<!-- If we want to display author's name and bio -->
+            
+                <section class="author">
+                	<header> <a href="/blog"> <img class="profile" src="/blog/assets/images/avatar.jpg" alt="Dario Prandi"></a></header>
+                	<article>
+                		<!-- Author Name -->
+                    	<h4> Dario Prandi </h4>
+                    	<!-- Author Bio -->
+                    	<p> 
+                    		Here goes the author description. You might want to place some links too in here
+                    	</p>
+                    </article>
+                </section>                
+            
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="http://twitter.com/share?text=Image inpainting video&amp;url=/2014/01/07/image-inpainting-video.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=/2014/01/07/image-inpainting-video.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=/2014/01/07/image-inpainting-video.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+            
+            
+        	
+        </footer>
+
+    </article>
+
+</main>
+
+
+    <footer class="site-footer">
+        <a class="subscribe icon-feed" href="/blogrss.xml"><span class="tooltip">Subscribe!</span></a>
+        <div class="inner">
+             <section class="copyright">All content copyright <a href="/blog">A set of measure zero</a> &copy;  &bull; All rights reserved.</section>
+             <section class="poweredby">Made with Jekyll using <a href="http://github.com/rosario/kasper">Kasper theme</a></section>
+        </div>
+    </footer>
+
+    
+    <script type="text/javascript" src="/blog//assets/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/blog//assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/blog//assets/js/index.js"></script>
+
+    <!-- Google Analytics Tracking code -->
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-XXXXXXXX-X']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>   
+
+<!-- Math enviroment -->
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+</script>
+
+
+</body>
+</html>
