@@ -10,8 +10,8 @@
     <description>Blogging about stuffs</description>
     <pubDate>Mon, 13 Jan 2014 23:40:00 -0000</pubDate>
     <item>
-      <title>Mathematica - Change of variables in a differential equation</title>
-      <link>http://www.darioprandi.com/blog/2014/01/13/change-of-variables-in-a-differential-equation.html</link>
+      <title>Mathematica - Transformations in a differential equation</title>
+      <link>http://www.darioprandi.com/blog/2014/01/13/mathematica-transformations-in-a-differential-equation.html</link>
       <description>&lt;p&gt;
 Just a quick one. 
 Today I needed to change variables inside a PDE.
