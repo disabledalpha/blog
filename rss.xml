@@ -8,10 +8,10 @@
     <title>A set of measure zero</title>
     <link>http://www.darioprandi.com/blog</link>
     <description>Blogging about stuffs</description>
-    <pubDate>Mon, 13 Jan 2014 23:40:00 -0000</pubDate>
+    <pubDate>Mon, 13 Jan 2014 00:00:00 +0100</pubDate>
     <item>
       <title>Mathematica - Transformations in a differential equation</title>
-      <link>http://www.darioprandi.com/blog/2014/01/13/mathematica-transformations-in-a-differential-equation.html</link>
+      <link>http://www.darioprandi.com/blog/2014/01/13/mathematica---transformations-in-a-differential-equation.html</link>
       <description>&lt;p&gt;
 Just a quick one. 
 Today I needed to change variables inside a PDE.
@@ -20,8 +20,8 @@ So, what better than have a software do all the hard work?
 &lt;/p&gt;
 
 </description>
-      <pubDate>Mon, 13 Jan 2014 23:40:00 -0000</pubDate>
-      <dc:date>2014-01-13T23:40:00Z</dc:date>
+      <pubDate>Mon, 13 Jan 2014 00:00:00 +0100</pubDate>
+      <dc:date>2014-01-13T00:00:00+01:00</dc:date>
     </item>
     <item>
       <title>Image inpainting video</title>
@@ -33,30 +33,20 @@ Your browser does not support the video tag.
 &lt;/video&gt;
 
 </description>
-      <pubDate>Tue, 07 Jan 2014 08:40:00 -0000</pubDate>
-      <dc:date>2014-01-07T08:40:00Z</dc:date>
+      <pubDate>Tue, 07 Jan 2014 00:00:00 +0100</pubDate>
+      <dc:date>2014-01-07T00:00:00+01:00</dc:date>
     </item>
     <item>
       <title>(Unfinished) Paper reading - Generalized Fourier Descriptors with Applications to Objects Recognition in SVM Context</title>
-      <link>http://www.darioprandi.com/blog/2014/01/06/paper-reading-I.html</link>
+      <link>http://www.darioprandi.com/blog/2014/01/06/unfinished-paper-reading---generalized-fourier-descriptors-with-applications-to-objects-recognition-in-svm-context.html</link>
       <description>&lt;p&gt;
 In this post I collect some notes regarding the reading of &lt;a href=&quot;http://www.lsis.org/gauthierjp/papers/110.pdf&quot;&gt;this paper&lt;/a&gt;.
 &lt;/p&gt;
 
 </description>
-      <pubDate>Mon, 06 Jan 2014 16:40:00 -0000</pubDate>
-      <dc:date>2014-01-06T16:40:00Z</dc:date>
+      <pubDate>Mon, 06 Jan 2014 00:00:00 +0100</pubDate>
+      <dc:date>2014-01-06T00:00:00+01:00</dc:date>
     </item>
-    <item>
-      <title>Welcome to Jekyll!</title>
-      <link>http://www.darioprandi.com/blog/jekyll/update/2013/11/10/welcome-to-jekyll.html</link>
-      <description>&lt;p&gt;You’ll find this post in your &lt;code&gt;_posts&lt;/code&gt; directory - edit this post and re-build (or run with the &lt;code&gt;-w&lt;/code&gt; switch) to see your changes!
-To add new posts, simply add a file in the &lt;code&gt;_posts&lt;/code&gt; directory that follows the convention: YYYY-MM-DD-name-of-post.ext.&lt;/p&gt;
-
-</description>
-      <pubDate>Sun, 10 Nov 2013 10:18:00 -0000</pubDate>
-      <dc:date>2013-11-10T10:18:00Z</dc:date>
-    </item>
-    <dc:date>2014-01-13T23:40:00Z</dc:date>
+    <dc:date>2014-01-13T00:00:00+01:00</dc:date>
   </channel>
 </rss>
