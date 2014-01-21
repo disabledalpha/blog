@@ -8,7 +8,21 @@
     <title>A set of measure zero</title>
     <link>http://www.darioprandi.com/blog</link>
     <description>Blogging about stuffs</description>
-    <pubDate>Mon, 13 Jan 2014 00:00:00 +0100</pubDate>
+    <pubDate>Tue, 21 Jan 2014 00:00:00 +0100</pubDate>
+    <item>
+      <title>Fortran routines in python, an F2PY tutorial</title>
+      <link>http://www.darioprandi.com/blog/2014/01/21/fortran-routines-in-python-an-fpy-tutorial.html</link>
+      <description>&lt;p&gt;
+I'm a fan of Python and of numpy, but when it comes to doing a lot of computations it has its shortcomings.
+I've heard a lot of good about &lt;a href=&quot;http://cython.org&quot;&gt;cython&lt;/a&gt; and I plan to check it out real soon.
+However I'm currently working at porting a fortran program to python, so it makes a lot more sense to simply compile the computationally heavy part from the fortran code in a python module.
+&lt;a href=&quot;http://www.f2py.com&quot;&gt;F2PY&lt;/a&gt; does exactly this and I'm writing this post as a reminder on how it works.
+&lt;/p&gt;
+
+</description>
+      <pubDate>Tue, 21 Jan 2014 00:00:00 +0100</pubDate>
+      <dc:date>2014-01-21T00:00:00+01:00</dc:date>
+    </item>
     <item>
       <title>Mathematica - Transformations in a differential equation</title>
       <link>http://www.darioprandi.com/blog/2014/01/13/mathematica---transformations-in-a-differential-equation.html</link>
@@ -47,6 +61,6 @@ In this post I collect some notes regarding the reading of &lt;a href=&quot;http
       <pubDate>Mon, 06 Jan 2014 00:00:00 +0100</pubDate>
       <dc:date>2014-01-06T00:00:00+01:00</dc:date>
     </item>
-    <dc:date>2014-01-13T00:00:00+01:00</dc:date>
+    <dc:date>2014-01-21T00:00:00+01:00</dc:date>
   </channel>
 </rss>
