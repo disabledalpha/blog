@@ -69,7 +69,6 @@ You can find the preprint <a href="http://arxiv.org/abs/1309.2571">here</a>.
 <ul>
 <li><a href="#sec-6-1">SR setting</a></li>
 <li><a href="#sec-6-2">Control-affine setting</a></li>
-<li><a href="#sec-6-3">Uniformity &amp; absence of metric cusps</a></li>
 </ul>
 </li>
 <li><a href="#sec-7">Final remarks</a></li>
@@ -584,16 +583,16 @@ Here,
 <div class="outline-text-4" id="text-6-1-2">
 <p>
 Due to the equiregularity of the distribution, the Ball-box theorem holds uniformily on compact sets.
-This means that for any compact \(K\subset M\) it is possible to find a continuous family of coordinates \(\{z^{p}\}_{p\in K}\) and \(\epsilon_{K},\, C_{K}>0\) such that \(z^{p}\) is a privileged system of coordinates at \(p\in K\) and for any \(\eps<\eps_{K}\) the ball-box theorem holds with constant \(C_{K}\) at each point \(p\in K\).
+This means that for any compact \(K\subset M\) it is possible to find a continuous family of coordinates \(\{z^{p}\}_{p\in K}\) and \(\epsilon_{K},\, C_{K}>0\) such that \(z^{p}\) is a privileged system of coordinates at \(p\in K\) and for any \(\epsilon<\epsilon_{K}\) the ball-box theorem holds with constant \(C_{K}\) at each point \(p\in K\).
 </p>
 
 <p>
 Once one has uniformity of the ball-box it is quite easy, at least heuristically, to estimate the complexity of curves such that \(T\Gamma\subset \Delta^k\setminus\Delta^{k-1}\).
 Namely, without being precise, one can rectify the curve with respect to some family of privileged coordinates, i.e., $&Gamma;=\{ t&part;<sub>z<sub>&alpha;</sub></sub>\mid t&isin;[0,T] \} for some \(T>0\) and \(\alpha\) such that \(w_{\alpha}=k\).
-Then, by the ball-box theorem, we know that with cost \(\eps\) it is possible to advance in the direction \(z_{\alpha}\) of \(\eps^{k}\).
+Then, by the ball-box theorem, we know that with cost \(\epsilon\) it is possible to advance in the direction \(z_{\alpha}\) of \(\epsilon^{k}\).
 Since to cover the curve we need \(T/\epsilon^k\) of such pieces, we obtain that
 \[
-\Sigma(\Gamma,\epsilon) \le \epsilon \frac{T}{\epsilon^k} \times \frac{1}{\eps} = \frac{T}{\epsilon^k}.
+\Sigma(\Gamma,\epsilon)= \frac{1}{\epsilon}\inf_{u\in\mathcal A(\Gamma,\epsilon)} J(u) \le \epsilon \frac{T}{\epsilon^k} \times \frac{1}{\epsilon} = \frac{T}{\epsilon^k}.
 \]
 In particular this estimate holds whenever \(T\Gamma\subset\Delta^k\).
 In a similar way one can obtain also the \(\ge\), that however holds only when \(T\Gamma\subset \Delta^k\setminus\Delta^{k-1}\).
@@ -698,15 +697,15 @@ To obtain our result, we then proceeded in the following way:
 </ol>
 </div>
 </div>
-</div>
-<div id="outline-container-sec-6-3" class="outline-3">
-<h3 id="sec-6-3">Uniformity &amp; absence of metric cusps</h3>
-<div class="outline-text-3" id="text-6-3">
+<div id="outline-container-sec-6-2-2" class="outline-4">
+<h4 id="sec-6-2-2">Uniformity &amp; absence of metric cusps</h4>
+<div class="outline-text-4" id="text-6-2-2">
 <p>
 These two facts are satisfied thanks to the equiregularity and to the fact that \(f_0\in\Delta^s\setminus\Delta^{s-1}\).
 Indeed, for metric cusps, this only proves that they are isolated points on &Gamma;: they can still appear whenever the drift is tangent to &Gamma; for some time and then stops.
 However, since we have some liberty in the choice of \(\Gamma'\), this suffices for our purposes.
 </p>
+</div>
 </div>
 </div>
 </div>
