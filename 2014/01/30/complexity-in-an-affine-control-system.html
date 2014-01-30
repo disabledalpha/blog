@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html>
+<head>   
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>A set of measure zero - Blogging about stuffs</title>
+    <meta name="description" content="A set of measure zero, Blogging about stuffs" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+   
+    <link rel="stylesheet" type="text/css" href="/blog//assets/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+    <!-- This is for syntax highlight -->
+    <link rel="stylesheet" type="text/css" href="/blog//assets/css/syntax.css">
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/blog//assets/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    
+    <main class="content" role="main">
+
+    <article class="post">
+        <header class="post-header">
+            <a id="blog-logo" href="/blog/">
+                
+                    <span class="blog-title">A set of measure zero</span>
+                 
+            </a>
+        </header>
+        
+        <span class="post-meta">
+        	<time datetime="2014-01-30">30 Jan 2014</time>
+        	
+       	</span>
+
+        <h1 class="post-title">Complexity in an affine control system</h1>
+
+        <section class="post-content">
+            <p>
+Here are the notes for the seminar I gave today at the <a href="http://www.lsis.org/seminaire-theorieducontrol/">Séminaire de Théorie du Contrôle de Toulon</a>.
+</p>
+
+<p>
+This is a joint work with F. Jean, and is currently under review.
+You can find the preprint <a href="http://arxiv.org/abs/1309.2571">here</a>.
+</p>
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">General Framework</a></li>
+<li><a href="#sec-2">Motion Planning problem</a></li>
+<li><a href="#sec-3">Complexities in general control systems</a>
+<ul>
+<li><a href="#sec-3-1">Static problems: obstacle avoidance</a></li>
+<li><a href="#sec-3-2">Time-critical problems: rendez-vous problem</a></li>
+</ul>
+</li>
+<li><a href="#sec-4">A particular case: SR geometry</a></li>
+<li><a href="#sec-5">Control-affine systems</a></li>
+<li><a href="#sec-6">Techniques</a>
+<ul>
+<li><a href="#sec-6-1">SR setting</a></li>
+<li><a href="#sec-6-2">Control-affine setting</a></li>
+<li><a href="#sec-6-3">Uniformity &amp; absence of metric cusps</a></li>
+</ul>
+</li>
+<li><a href="#sec-7">Final remarks</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><a href="http://darioprandi.com/2014/01/30/complexity-in-an-affine-control-system.html">General Framework</a></h2>
+<div class="outline-text-2" id="text-1">
+<p>
+In this talk we will consider control-affine systems.
+Namely, we will be interested in
+\[
+\dot q = f_0(q)+\sum_{j=1}^m u_j f_j(q)
+\]
+where:
+</p>
+<ul class="org-ul">
+<li>\(q\) is a point on a smooth manifold
+</li>
+<li>\(f_0,f_1,\ldots,f_m\) are smooth vector fields
+<ul class="org-ul">
+<li>\(f_1,\ldots,f_m\) are the <b>control vector fields</b>
+</li>
+<li>\(f_0\) is the <b>drift</b>
+</li>
+</ul>
+</li>
+<li>\(u\)  is an integrable control defined on \([0,T]\) 
+</li>
+</ul>
+
+<p>
+These systems have a lot of applications, just to cite a few we recall:
+</p>
+<ul class="org-ul">
+<li>mechanical systems
+</li>
+<li>quantum control
+</li>
+<li>micro-swimmers
+</li>
+<li>neuro-geometry of vision
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">Motion Planning problem</h2>
+<div class="outline-text-2" id="text-2">
+
+<div class="figure">
+<p><img src="../../../assets/images/motion-planning.png" alt="motion-planning.png" width="50%" />
+</p>
+</div>
+
+<p>
+Given a control system, the first problem one faces is the <b>motion planning problem</b>: 
+</p>
+<blockquote>
+<p>
+Given \(x,y\in M\) devise a strategy (find a control) to steer the system from \(x\) to \(y\) subject to certain <i>constraints</i>.
+</p>
+</blockquote>
+
+<p>
+Constraints can be of two types:
+</p>
+<dl class="org-dl">
+<dt> static </dt><dd>they do not depend on time, like to avoid some obstacles
+</dd>
+<dt> time-critical </dt><dd>they depend on time, like to avoid moving obstacles or the so-called rendez-vous problems<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup>
+</dd>
+</dl>
+</div>
+
+
+<div id="outline-container-sec-2-0-1" class="outline-4">
+<h4 id="sec-2-0-1">Method</h4>
+<div class="outline-text-4" id="text-2-0-1">
+<p>
+A lot of methods exists to solve the motion planning problem.
+</p>
+
+<p>
+We consider a two step method:
+</p>
+
+<blockquote>
+<ol class="org-ol">
+<li>Find a (non-admissible) curve or path solving the problem
+</li>
+<li>Track it by means of an admissible trajectory (that keeps satisfying the constraints)
+</li>
+</ol>
+</blockquote>
+
+
+<div class="figure">
+<p><img src="../../../assets/images/curve-obstacles.png" alt="curve-obstacles.png" width="50%" />
+</p>
+</div>
+
+<p>
+Few remarks:
+</p>
+<ul class="org-ul">
+<li>We will look for a curve in the case of static problems and for a path in the case of time-critical problems
+</li>
+<li>This method is extremely modularized, indeed:
+<ol class="org-ol">
+<li>Depends only on the global topology of the manifold and on the constraints. <i>It does not depend on the control system</i>.
+</li>
+<li>Depends only on the local nature of the control system.
+</li>
+</ol>
+</li>
+</ul>
+
+<p>
+We will thus focus on solving the second step.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3">Complexities in general control systems</h2>
+<div class="outline-text-2" id="text-3">
+<blockquote>
+<p>
+<b>Complexity:</b> measure of the "difficulty" of tracking a given curve/path at a certain precision.
+</p>
+</blockquote>
+
+<p>
+Heuristically, the complexity of a curve \(\Gamma\) at precision \(\epsilon\) is defined as the ratio
+\[
+\sigma(\Gamma,\epsilon) = \frac{\textrm{cost of tracking }\Gamma\textrm{ at precision }\epsilon}{\textrm{cost of an elementary }\epsilon\textrm{ piece}} 
+\]
+</p>
+
+<p>
+To give a meaning to such ratio we have to choose:
+</p>
+
+<ul class="org-ul">
+<li>a <b>cost function</b> \(J:\mathcal U \to [0,+\infty)\). Here we let \(\mathcal U\) to be the set of integrable controls defined with maximum time less than \(\mathcal T\);
+</li>
+<li>a set of controls that track &Gamma; at precision &epsilon;, that we will call Adm(&Gamma;,&epsilon;).
+</li>
+</ul>
+
+<p>
+Once we have done that, we can precisely define
+\[
+\sigma(\Gamma,\epsilon)= \frac{1}{\epsilon} \inf_{u \in\textrm{Adm}(\Gamma,\epsilon)} J(u,T).
+\]
+</p>
+
+<p>
+Here we will treat only 2 complexities.
+</p>
+</div>
+
+<div id="outline-container-sec-3-0-1" class="outline-4">
+<h4 id="sec-3-0-1">Assumption</h4>
+<div class="outline-text-4" id="text-3-0-1">
+<p>
+From now on we will assume that a metric is fixed on \(M\), with balls \(B(q,r)\).
+This is not necessary to define complexity (in the paper you can find 2 different definitions based on interpolation which do not require a metric) but is done for the sake of clarity.
+</p>
+
+<p>
+In general such metric is completely independent of the control system.
+Later we will however consider a "natural" metric associated to our control systems.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-3-1" class="outline-3">
+<h3 id="sec-3-1">Static problems: obstacle avoidance</h3>
+<div class="outline-text-3" id="text-3-1">
+
+<div class="figure">
+<p><img src="../../../assets/images/tubular_complexity.png" alt="tubular_complexity.png" width="70%" />
+</p>
+</div>
+
+<p>
+In this case, we know that the given curve \(\Gamma\subset M\) stays away from the obstacles. 
+So, to be sure not to touch them, it is enough to stay inside a tubular neighborhood of sufficiently small radius. 
+Thus we will let
+\[
+\mathcal A(\Gamma,\epsilon) = \{ u\in L^1([0,T])^m \mid T>0, q_u(T) = y, q_u([0,T])\subset \textrm{Tube}(\Gamma,\epsilon)  \}.
+\] 
+</p>
+
+<p>
+The <i>tubular approximation complexity</i> is then defined as
+\[
+\Sigma(\Gamma,\epsilon) = \frac{1}{\epsilon} \inf_{u\in\mathcal A(\Gamma,\epsilon)} J(u,T)
+\]
+</p>
+</div>
+</div>
+<div id="outline-container-sec-3-2" class="outline-3">
+<h3 id="sec-3-2">Time-critical problems: rendez-vous problem</h3>
+<div class="outline-text-3" id="text-3-2">
+
+<div class="figure">
+<p><img src="../../../assets/images/neighboring_complexity.png" alt="neighboring_complexity.png" width="70%" />
+</p>
+</div>
+
+<p>
+Here, we are given a path \(\gamma[0,T]\to M\).
+To be sure that at time \(t\) we are near the point \(\gamma(t)\), we consider the following set of admissible controls:
+\[
+\mathcal N(\Gamma,\epsilon) = \{ u\in L^1([0,T])^m \mid q_u(T) = y, q_u(\cdot)\in B(\gamma(\cdot),\epsilon)  \}.
+\] 
+</p>
+
+<p>
+The <i>neighborhing approximation complexity</i> is then defined as
+\[
+\sigma(\gamma,\epsilon) = \frac{1}{\epsilon} \inf_{u\in\mathcal N(\gamma,\epsilon)} J(u,T)
+\]
+</p>
+
+<p>
+<b>Attention:</b> here the time \(T>0\) is fixed.
+</p>
+</div>
+
+<div id="outline-container-sec-3-2-1" class="outline-4">
+<h4 id="sec-3-2-1">Remark</h4>
+<div class="outline-text-4" id="text-3-2-1">
+<p>
+Observe that \(\mathcal N(\gamma,\epsilon) \subset \mathcal A(\Gamma,\epsilon)\), i.e., each control admissible for the neighboring complexity of \(\gamma\) is also admissible for the tubular approximation complexity of \(\Gamma = \gamma([0,T])\). 
+Thus, it is always true that \(\sigma(\gamma,\epsilon) \ge \Sigma(\Gamma,\epsilon)\).
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4">A particular case: SR geometry</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Complexities have been extensively studied in the sub-Riemannian context.
+</p>
+
+<p>
+Sub-riemannian geometry is the geometry underlying driftless control-affine optimal control problems.
+Namely, we consider the following control system,
+</p>
+
+<p>
+\[
+\dot q = \sum_{j=1}^m u_j f_j(q)
+\]
+</p>
+
+<p>
+We let \(\Delta(q) = \textrm{span}\{f_1(q),\ldots,f_m(q) \}\) be the distribution.
+Then \(\Delta^k(q) = \Delta^{k-1}(q)+[\Delta,\Delta^{k-1}](q)\) is the span of the brackets of the control vector fields of length at most \(k\).
+</p>
+
+<p>
+We are interested in measuring the length of trajectories, thus we will consider the \(L^1\)-norm as a cost:
+\[
+J(u,T) = \int_0^T \sqrt{\sum_{j=1}^m u_j(t)^2}\,dt.
+\]
+</p>
+</div>
+
+<div id="outline-container-sec-4-0-1" class="outline-4">
+<h4 id="sec-4-0-1">Assumptions</h4>
+<div class="outline-text-4" id="text-4-0-1">
+<dl class="org-dl">
+<dt> Hörmander cond. </dt><dd>\(\Delta(q)\subset \Delta^2(q) \subset \ldots \subset \Delta^r(q) = T_qM\) for some \(r=r(q)\). This is equivalent to say that the Lie algebra generated by the control vector fields spans the whole tangent space.
+</dd>
+<dt> Equiregularity </dt><dd>the dimensions of the spaces \(\Delta^s(q)\) do not depend on the point. In particular neither does \(r\).
+</dd>
+</dl>
+</div>
+</div>
+<div id="outline-container-sec-4-0-2" class="outline-4">
+<h4 id="sec-4-0-2">Properties</h4>
+<div class="outline-text-4" id="text-4-0-2">
+<ul class="org-ul">
+<li>By Chow theorem, thanks to the Hörmander condition the value function associated with the L<sup>1</sup> cost is always finite (i.e., every pair of point on \(M\) is joined by at least one admissible trajectry) and is indeed a distance (<i>sub-Riemannian distance</i>).
+</li>
+<li>Thanks to the rescaling properties of the L<sup>1</sup> cost and the linearity of the system, given a trajectory we can always reparametrize it on a different time-scale without changing its cost. Namely, if \(u(\cdot)\) is a control defined on \([0,T]\) and with associated trajectory \(\gamma(\cdot)\), the control \(u_s(\cdot) = \frac{s}{T} u(\frac{T}{s}\cdot)\), defined on \([0,s]\), has the same cost and the same associated trajectory.
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-4-0-3" class="outline-4">
+<h4 id="sec-4-0-3">Sub-Riemannian complexity</h4>
+<div class="outline-text-4" id="text-4-0-3">
+<p>
+Since the control system yields in a natural way a metric, we will use such metric to measure the complexity.
+</p>
+
+<p>
+By the second property above, static and time-critical problems are the same from the point of view of SR geometry. 
+Namely \(\mathcal N(\gamma,\epsilon) = \mathcal A(\gamma([0,T]),\epsilon)\) and hence
+\[
+\Sigma(\gamma([0,T]),\epsilon) = \sigma(\gamma,\epsilon)
+\]
+Indeed the complexity of a curve is a geometric property that is related to the Hausdorff dimension of the curve.
+</p>
+
+
+<p>
+Some historical facts:
+</p>
+<ul class="org-ul">
+<li>Introduced by Gromov (1996), in a different setting. He was interested in approximating sets by points.
+</li>
+<li>Jean (2003) studied the <i>weak equivalence</i> (for general non-equiregular systems):
+</li>
+</ul>
+<p>
+\[
+\sigma(\Gamma,\epsilon) \asymp g(\Gamma,\epsilon) \iff C_1 \le \frac{\sigma(\Gamma,\epsilon)}{g(\Gamma,\epsilon)} \le C_2 \textrm{ as }\epsilon\downarrow 0.
+\]
+</p>
+<ul class="org-ul">
+<li>Gauthier, Zakalyukin et al. (from 2004) <i>strong equivalence</i>:
+</li>
+</ul>
+<p>
+\[
+\sigma(\Gamma,\epsilon) \asymp g(\Gamma,\epsilon) \iff  \frac{\sigma(\Gamma,\epsilon)}{g(\Gamma,\epsilon)} \rightarrow 1 \textrm{ as }\epsilon\downarrow 0.
+\]
+</p>
+
+<p>
+Indeed, we will focus on weak asymptotics estimates.
+The main result in this respect for equiregular<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup> sub-Riemannian manifolds is the following, by Jean.
+</p>
+
+<blockquote>
+<p>
+Let \(\Gamma\subset M\) be a curve such that \(T\Gamma\subset\Delta^{k}\) and \(T\Gamma\not\subset\Delta^{k-1}\).
+Then,
+\[
+\Sigma(\Gamma,\epsilon) \asymp \frac{1}{\epsilon^k}.
+\]
+</p>
+</blockquote>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5">Control-affine systems</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+We now consider control-affine systems
+\[
+\dot q = f_0(q)+\sum_{j=1}^m u_j\,f_{j}(q)
+\]
+</p>
+
+<p>
+We will still denote with \(\Delta^k\) the elements of the flag defined by the associated drifless system.
+</p>
+</div>
+
+<div id="outline-container-sec-5-0-1" class="outline-4">
+<h4 id="sec-5-0-1">Assumptions</h4>
+<div class="outline-text-4" id="text-5-0-1">
+<dl class="org-dl">
+<dt> strong Hörmander </dt><dd>the Lie algebra generated by the <i>control</i> vector fields spans the whole tangent space. We do not need the drift.
+</dd>
+<dt> equiregularity </dt><dd>the dimensions of the spaces \(\Delta^s(q)\) do not depend on the point.
+</dd>
+<dt> cost </dt><dd>as before, we consider as a cost the \(L^1\) norm.
+</dd>
+<dt> admissible controls </dt><dd>we consider integrable controls defined on time less than \(\mathcal T\).
+</dd>
+</dl>
+</div>
+</div>
+<div id="outline-container-sec-5-0-2" class="outline-4">
+<h4 id="sec-5-0-2">Properties</h4>
+<div class="outline-text-4" id="text-5-0-2">
+<ul class="org-ul">
+<li>The associated driftless (\(f_0\equiv 0\)) system is sub-Riemannian.
+</li>
+<li>Thanks to the strong Hörmander condition, we have <i>small time local controllability</i> <sup><a id="fnr.3" name="fnr.3" class="footref" href="#fn.3">3</a></sup>.
+</li>
+<li>It is always possible to move in the direction of the drift for free.
+</li>
+<li>Due to the non-linearity in the control, reparametrizing the controls yield different trajectories (contrarily to the sub-Riemannian case) and hence the complexities will behave differently. However, letting \(\gamma_s\) be the trajectory of a control \(u\) reparametrized on \([0,s]\) it holds, in a precise sense, that \(\gamma_s\longrightarrow \gamma\) as \(s\downarrow0\), where \(\gamma\) is the sub-Riemannian trajectory associated with \(u\).
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-3" class="outline-4">
+<h4 id="sec-5-0-3">Complexities</h4>
+<div class="outline-text-4" id="text-5-0-3">
+<ul class="org-ul">
+<li>As a metric we will use the sub-Riemannian metric of the associated driftless system. This is a rather natural choice.
+</li>
+<li>Since we cannot reparametrize the trajectories, \(\sigma(\gamma,\epsilon) \neq \Sigma(\Gamma,\epsilon)\).
+</li>
+</ul>
+
+<p>
+So, our main result is the following,
+</p>
+
+<blockquote>
+<p>
+<b>Theorem.</b>
+Let \(f_0\subset\Delta^s\setminus \Delta^{s-1}\).
+</p>
+<ul class="org-ul">
+<li>\(\Gamma\subset M\) such that, for some \(k\), \(T\Gamma\subset \Delta^{k}\) and \(T\Gamma\not\subset \Delta^{k-1}\). Then, for sufficiently small \(\mathcal T\), we have
+</li>
+</ul>
+<p>
+\[
+\Sigma(\Gamma,\epsilon) \asymp \frac{1}{\epsilon^k}.
+\]
+</p>
+<ul class="org-ul">
+<li>\(\gamma:[0,T]\to M\) such that, for some \(k\), \(\dot\gamma\in\Delta^k\) and \(\dot\gamma\not\in\Delta^{k-1}\). If, moreover, \(s=k\), we assume that \(\dot\gamma\neq f_0(\gamma) \textrm{mod} \Delta^{s-1}(\gamma)\). Then,
+</li>
+</ul>
+<p>
+\[
+\sigma(\gamma,\epsilon) \asymp \frac{1}{\epsilon^{\max\{s,k\}}}.
+\]
+</p>
+</blockquote>
+
+
+<p>
+<b>Remarks:</b>
+</p>
+<ul class="org-ul">
+<li>The complexity of curves is not sensible to the drift
+</li>
+<li>The complexity of paths is sensible to the drift. In particular, when \(f_0\subset\Delta^r\setminus\Delta^{r-1}\) where \(r\) is such that \(\Delta^r = T_q M\), the complexity is always maximal, i.e., \(\sigma(\gamma,\epsilon)\asymp \epsilon^{-r}\).
+</li>
+<li>The bound on the maximal time of definition of the controls is essential to localize the problem. Moreover, without it the global relation between the drift and the curve (that we cannot control) could play an important role. For example, in the case of complexities built on interpolation, we could have the following problem.
+</li>
+</ul>
+
+
+<div class="figure">
+<p><img src="../../../assets/images/snake.png" alt="snake.png" width="50%" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6">Techniques</h2>
+<div class="outline-text-2" id="text-6">
+</div><div id="outline-container-sec-6-1" class="outline-3">
+<h3 id="sec-6-1">SR setting</h3>
+<div class="outline-text-3" id="text-6-1">
+<p>
+The essential ingredients for the proof in the sub-Riemannian case are
+</p>
+<dl class="org-dl">
+<dt> Ball-box theorem </dt><dd>It allows us to estimate how far can we get with a control of cost &epsilon;
+</dd>
+<dt> uniformity </dt><dd>we need a ball-box theorem with uniform constants (guaranteed by the equiregularity, in our case).
+</dd>
+<dt> no metric cusps </dt><dd>we will need the points of the curve to be well behaved.
+</dd>
+</dl>
+</div>
+
+<div id="outline-container-sec-6-1-1" class="outline-4">
+<h4 id="sec-6-1-1">Ball-box Theorem</h4>
+<div class="outline-text-4" id="text-6-1-1">
+<p>
+A system of privileged coordinates is a system of coordinates \((z_1,\ldots,z_n)\) on \(M\) with associated weights \((w_1,\ldots,w_n)\) such that \(\partial_{z_i}\in\Delta^{w_i}\setminus\Delta^{w_i-1}\).
+</p>
+
+<blockquote>
+<p>
+<b>Ball-box theorem.</b>
+In any system of privileged coordinates centered at \(q\), for &epsilon; sufficiently small it holds
+\[
+\textrm{Box}(C_1 \epsilon)\subset B(q,\epsilon)\subset \textrm{Box}(C_2 \epsilon).
+\]
+Here,
+\[
+\textrm{Box}(\epsilon) = \{z \in\mathbb R^n \mid |z_i|\le \epsilon^{w_i} \}.
+\]
+</p>
+</blockquote>
+</div>
+</div>
+<div id="outline-container-sec-6-1-2" class="outline-4">
+<h4 id="sec-6-1-2">Uniformity</h4>
+<div class="outline-text-4" id="text-6-1-2">
+<p>
+Due to the equiregularity of the distribution, the Ball-box theorem holds uniformily on compact sets.
+This means that for any compact \(K\subset M\) it is possible to find a continuous family of coordinates \(\{z^{p}\}_{p\in K}\) and \(\epsilon_{K},\, C_{K}>0\) such that \(z^{p}\) is a privileged system of coordinates at \(p\in K\) and for any \(\eps<\eps_{K}\) the ball-box theorem holds with constant \(C_{K}\) at each point \(p\in K\).
+</p>
+
+<p>
+Once one has uniformity of the ball-box it is quite easy, at least heuristically, to estimate the complexity of curves such that \(T\Gamma\subset \Delta^k\setminus\Delta^{k-1}\).
+Namely, without being precise, one can rectify the curve with respect to some family of privileged coordinates, i.e., $&Gamma;=\{ t&part;<sub>z<sub>&alpha;</sub></sub>\mid t&isin;[0,T] \} for some \(T>0\) and \(\alpha\) such that \(w_{\alpha}=k\).
+Then, by the ball-box theorem, we know that with cost \(\eps\) it is possible to advance in the direction \(z_{\alpha}\) of \(\eps^{k}\).
+Since to cover the curve we need \(T/\epsilon^k\) of such pieces, we obtain that
+\[
+\Sigma(\Gamma,\epsilon) \le \epsilon \frac{T}{\epsilon^k} \times \frac{1}{\eps} = \frac{T}{\epsilon^k}.
+\]
+In particular this estimate holds whenever \(T\Gamma\subset\Delta^k\).
+In a similar way one can obtain also the \(\ge\), that however holds only when \(T\Gamma\subset \Delta^k\setminus\Delta^{k-1}\).
+</p>
+</div>
+</div>
+<div id="outline-container-sec-6-1-3" class="outline-4">
+<h4 id="sec-6-1-3">Absence of metric cusps</h4>
+<div class="outline-text-4" id="text-6-1-3">
+<p>
+A metric cusp \(q_0\) for a curve \(\Gamma\) is a point that is difficult to attain.
+Precisely, for each \(c,\eta>0\) there exists two points \(q_1\) and \(q_2\) on \(\Gamma\) such that \(q_0\) is between them and \(d(q_1,q_2)\le \eta\) but \(d(q_1,q_0)>c\eta\).
+</p>
+
+<p>
+When we consider a sub-curve \(\Gamma' \subset\Gamma\) it is possible that one of its end-points be a metric curve.
+This fact is the only obstacle for the following essential inequality to be true
+\[
+\Sigma(\Gamma,\epsilon) \succcurlyeq \Sigma(\Gamma',\epsilon), \qquad \textrm{whenever } \Gamma' \subset\Gamma.
+\]
+This is necessary to pass from the previous estimate valid for \(T\Gamma\subset \Delta^k\setminus\Delta^{k-1}\) to the final result for \(T\Gamma\subset \Delta^k\) and \(T\Gamma\not\subset\Delta^{k-1}\).
+Indeed, in the second case, it is always possible to find \(\Gamma' \subset\Gamma\) such that \(T\Gamma' \subset \Delta^k\setminus\Delta^{k-1}\).
+</p>
+
+<p>
+Luckily, the equiregularity guarantees also that any curve is cusp-free.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-6-2" class="outline-3">
+<h3 id="sec-6-2">Control-affine setting</h3>
+<div class="outline-text-3" id="text-6-2">
+<p>
+In the control-affine setting we procedeed following the same scheme.
+</p>
+</div>
+
+<div id="outline-container-sec-6-2-1" class="outline-4">
+<h4 id="sec-6-2-1">Ball-box theorem</h4>
+<div class="outline-text-4" id="text-6-2-1">
+<p>
+First of all we had to develop a tool resembling the ball-box theorem, which is contained in <a href="http://arxiv.org/abs/1304.6649v1">this paper</a>. 
+</p>
+
+<blockquote>
+<p>
+<b>Theorem.</b>
+In any system of privileged coordinates (for the sub-Riemannian system) centered at \(q\) and such that \(\partial_{z_\ell} = z_{*}f_0\), for sufficiently small maximal time of definition of the controls \(\mathcal T\), it holds
+\[
+\Xi(C_1 \epsilon)\subset B(q,\epsilon) \subset \Pi(C_2\epsilon).
+\]
+Here,
+\[
+\Xi(\epsilon) = \bigcup_{0\le \xi \le \mathcal T} \left( \xi\partial_{z_{\ell}} + \textrm{Box}(\epsilon)  \right)
+\]
+</p>
+\begin{multline*}
+\Pi(\epsilon) = \textrm{Box}(\epsilon) \cup \bigcup_{0<\xi\le T}\{ z\in\mathbb R^n \mid 0\le z_{\ell}-\xi\le \epsilon^s, 
+|z_i|\le \epsilon^{w_i}+\epsilon \xi^{\frac{w_i}{s}} \textrm{ for } w_i\le s,\,i\neq\ell,\\ \textrm{and }|z_i|\le \epsilon(\epsilon+\xi^{\frac{1}{s}})^{w_i-1} \textrm{ for } w_i>s  \}.
+\end{multline*}
+</blockquote>
+
+
+<div class="figure">
+<p><img src="../../../assets/images/ball-box.png" alt="ball-box.png" />
+</p>
+<p><span class="figure-number">Figure 1:</span> The different shapes of the boxes in the sub-Riemannian and in the control-affine cases. Here we are considering a control-affine system on \(\mathbb R^3\) with 2 control vector fields and a linear independent drift (e.g., the Heisenberg group with a vertical drift).</p>
+</div>
+
+<p>
+By the rescaling properties of the \(L^1\) norm we can consider controls defined on smaller and smaller times. 
+Thus, their trajectories will approach the sub-Riemannian ones and we get 
+\[
+V(q_1,q_2) \le d_{\textrm{SR}}(q_1,q_2).
+\]
+This gives us an estimate from the inside of the shape of the reacheable set.
+</p>
+
+<p>
+From the outside we need to work more.
+Since we will adapt sub-Riemannian techniques, we have to assume that \(f_0\in \Delta^s\setminus\Delta^{s-1}\) for some \(s\) (regularity of the drift with respect to the sub-Riemannian associated system).
+Indeed,
+\[
+e^{t f_{0} - \epsilon f_1} \circ e^{t f_0 + \epsilon f_1}(q) \sim q + 2t f_0(q)+\epsilon t [f_0,f_1](q)+...
+\]
+So, in time \(t\), we can move in the direction \([f_0,f_1]\) by \(\epsilon t\) paying only \(2\epsilon\).
+In principle, if we have enough time, this would allow us to move in a direction lying in \(\Delta^{s+1}\) with a linear cost (while in the sub-Riemannian case this would cost \(\epsilon^{s+1}\))
+</p>
+
+<p>
+To obtain our result, we then proceeded in the following way:
+</p>
+<ol class="org-ol">
+<li>Reduction of the control-affine system to a linear but time-dependent one, \[\dot q = \sum_{j=1}^m u_j (e^{-t f_0})_{*} f_j(q).\]
+</li>
+<li>Generalization of the concept of nilpotent approximation to this kind of systems (<i>homogeneous series approximation</i>).
+</li>
+<li>Estimation of the shape of the ball for the homogeneous series approximation system.
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-6-3" class="outline-3">
+<h3 id="sec-6-3">Uniformity &amp; absence of metric cusps</h3>
+<div class="outline-text-3" id="text-6-3">
+<p>
+These two facts are satisfied thanks to the equiregularity and to the fact that \(f_0\in\Delta^s\setminus\Delta^{s-1}\).
+Indeed, for metric cusps, this only proves that they are isolated points on &Gamma;: they can still appear whenever the drift is tangent to &Gamma; for some time and then stops.
+However, since we have some liberty in the choice of \(\Gamma'\), this suffices for our purposes.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-7" class="outline-2">
+<h2 id="sec-7">Final remarks</h2>
+<div class="outline-text-2" id="text-7">
+<ul class="org-ul">
+<li>In our paper we define and treat, obtaining comparable results, also other two types of complexities. These are based on interpolation and hence do not require the introduction of a metric.
+</li>
+<li>We studied also a different cost, for which we obtain similar results,\[J_2 = \int_0^T \sqrt{1+\sum_{j=1}^m u_j(t)^2}\,dt.\] This cost penalizes also the time: we cannot move for free in the direction of the drift.
+</li>
+<li>We did not study the (interesting) case where the curve/path to approximate is containted in the zero level set of the drift.
+</li>
+<li>These methods do not seem fit to attack the same problem in presence of only weak Hörmander condition (where we lose localization, in general) or with other costs (where we lose the possibility to approach the associated sub-Riemannian system).
+</li>
+</ul>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
+In a rendez-vous problem we are required to be "near" certain places at certain times. Example: airplanes approaching an airport.
+</p></div>
+
+<div class="footdef"><sup><a id="fn.2" name="fn.2" class="footnum" href="#fnr.2">2</a></sup> <p class="footpara">
+We restrict ourselves to equiregular sub-Riemannian manifolds since in the control-affine setting we will able to treat only this case. The result that we present here is just a particularization of a more general result holding for non-necessarily equiregular manifolds.
+</p></div>
+
+<div class="footdef"><sup><a id="fn.3" name="fn.3" class="footnum" href="#fnr.3">3</a></sup> <p class="footpara">
+Namely, for any \(T>0\) the reachable set covers a whole neighborhood of the starting point.
+</p></div>
+
+
+</div>
+</div>
+        </section>
+
+        
+
+        <footer class="post-footer">
+        	<!-- If we want to display author's name and bio -->
+            
+                <section class="author">
+                	<header> <a href="/blog"> <img class="profile" src="/blog/assets/images/avatar.jpg" alt="Dario Prandi"></a></header>
+                	<article>
+                		<!-- Author Name -->
+                    	<h4> Dario Prandi </h4>
+                    	<!-- Author Bio -->
+                    	<p> 
+						  Mathematician & Computer Science enthusiast
+                    		<!-- Here goes the author description. You might want to place some links too in here -->
+                    	</p>
+                    </article>
+                </section>                
+            
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="http://twitter.com/share?text=Complexity in an affine control system&amp;url=/2014/01/30/complexity-in-an-affine-control-system.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=/2014/01/30/complexity-in-an-affine-control-system.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=/2014/01/30/complexity-in-an-affine-control-system.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+            
+            
+        	
+        </footer>
+
+    </article>
+
+</main>
+
+
+    <footer class="site-footer">
+        <a class="subscribe icon-feed" href="/blogrss.xml"><span class="tooltip">Subscribe!</span></a>
+        <div class="inner">
+             <section class="copyright">All content copyright <a href="/blog">A set of measure zero</a> &copy;  &bull; All rights reserved.</section>
+             <section class="poweredby">Made with Jekyll using <a href="http://github.com/rosario/kasper">Kasper theme</a></section>
+        </div>
+    </footer>
+
+    
+    <script type="text/javascript" src="/blog//assets/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/blog//assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/blog//assets/js/index.js"></script>
+
+    <!-- Google Analytics Tracking code -->
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-XXXXXXXX-X']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>   
+
+<!-- Math enviroment -->
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+</script>
+
+
+</body>
+</html>

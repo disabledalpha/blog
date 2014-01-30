@@ -49,6 +49,18 @@ However I'm currently working at porting a fortran program to python, so it make
 <a href="http://www.f2py.com">F2PY</a> does exactly this and I'm writing this post as a reminder on how it works.
 </p>
 
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">First step: Fortran side</a></li>
+<li><a href="#sec-2">Second step: generate a signature file</a></li>
+<li><a href="#sec-3">Third step: the Python module</a></li>
+<li><a href="#sec-4">Appendix: a smarter approach</a></li>
+</ul>
+</div>
+</div>
+
 <p>
 As an example we'll implement a simple function computing the cumulative sum of the elements in an integer vector.
 Let's call it vecSum.
