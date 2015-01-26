@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>   
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>A set of measure zero - Blogging about stuffs</title>
+    <meta name="description" content="A set of measure zero, Blogging about stuffs" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+   
+    <link rel="stylesheet" type="text/css" href="/blog//assets/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+    <!-- This is for syntax highlight -->
+    <link rel="stylesheet" type="text/css" href="/blog//assets/css/syntax.css">
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/blog//assets/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    
+    <main class="content" role="main">
+
+    <article class="post">
+        <header class="post-header">
+            <a id="blog-logo" href="/blog/">
+                
+                    <span class="blog-title">A set of measure zero</span>
+                 
+            </a>
+        </header>
+        
+        <span class="post-meta">
+        	<time datetime="2015-01-25">25 Jan 2015</time>
+        	
+       	</span>
+
+        <h1 class="post-title">Spiral Architecture - part 1</h1>
+
+        <section class="post-content">
+            <p>In this post we will start to describe a framework for image processing with hexagonal pixels introduced by Sheridan<sup id="fnref:fn"><a href="#fn:fn" class="footnote">1</a></sup>.</p>
+
+<p>Cones and rods in the retina of mammals are distributed on an honeycomb lattice, which can be represented using hexagonal pixels.
+This representation yields many advantages in image processing.
+For example, </p>
+
+<ul>
+  <li>Less pixels are needed to represent images with a given resolution (87% of the square ones required to discriminate at a given accuracy),</li>
+  <li>Each pixel is at the same distance from its neighbors,</li>
+  <li>Curves are more naturally represented, reducing the need of anti-aliasing procedures,</li>
+  <li>While on a square grid only 4 rotations (those of multiples of 90 degrees) can be exactly represented, in an hexagonal grid 6 rotations are at our disposal.</li>
+</ul>
+
+<p>This said, there are some problems to overcome in order to exploit these advantages:</p>
+
+<ul>
+  <li><strong>Conversion:</strong> Images are usually represented on square grids, so we need to convert them (possibly with a loss of resolution),</li>
+  <li><strong>Representation:</strong> While images on square grids are naturally represented as matrices, for hexagonal grids an appropriate indexing system and associated data structure have to be chosen.</li>
+</ul>
+
+<h2 id="conversion-pseudo-hexagonal-pixels">Conversion: Pseudo-hexagonal pixels</h2>
+
+<p>Simple computations show that, for a given resolution, an hexagonal pixel has to be bigger than a square one with a ratio $\sqrt{3}/2 \sim 0,866$.</p>
+
+<p>A quite efficient way of simulate this fact<sup id="fnref:fn3"><a href="#fn:fn3" class="footnote">2</a></sup> is to oversample this image by a factor of $7$. 
+This can be achieved by splitting each square pixel in a grid of 7x7 <em>elementary pixels</em> with identical values.
+Then, an hexagonal pixel will be represented as an <em>hyperpel</em>, that is, a collection of 56 elementary pixels arranged in an almost-hexagonal way.
+The value of an hyperpel will then be obtained averaging the value of the composing elementary pixels.
+The fact that 56 elementary pixels form an hyperpel while 49 form a square pixel yield a good approximation of the correct ratio: $49/56\asymp 0,875$.</p>
+
+<p>Various hyperpel have been devised, we will consider the following one:</p>
+
+<pre><code>o o x x x x x o o
+o x x x x x x x o
+o x x x x x x x o
+x x x x x x x x x
+x x x x x x x x x 
+o x x x x x x x o
+o x x x x x x x o
+o o x x x x x o o
+</code></pre>
+
+<p>This procedure has the advantage that, when it is required to visualize the image, there is no need to do any conversion.
+Moreover, the evaluation of the hyperpels values can be done only when needed, which reduces the preprocessing time.
+However, the space required to store the oversampled image increases by a factor of 49, effectively making too expensive the use of this method on high resolution images.</p>
+
+<p>A simple Python function for the oversampling procedure is the following:</p>
+
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">oversampling</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">factor</span> <span class="o">=</span> <span class="mi">7</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the oversampled image</span>
+
+<span class="sd">    `image`: initial gray-scale image represented as a 2D array</span>
+<span class="sd">    `factor`: the oversampling factor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">old_shape</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">new_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">factor</span><span class="o">*</span><span class="n">old_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">factor</span><span class="o">*</span><span class="n">old_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">new_image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">new_shape</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">old_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+       <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">old_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">new_image</span><span class="p">[</span><span class="n">factor</span><span class="o">*</span><span class="n">i</span><span class="p">:</span><span class="n">factor</span><span class="o">*</span><span class="n">i</span><span class="o">+</span><span class="n">factor</span><span class="p">,</span><span class="n">factor</span><span class="o">*</span><span class="n">j</span><span class="p">:</span><span class="n">factor</span><span class="o">*</span><span class="n">j</span><span class="o">+</span><span class="n">factor</span><span class="p">]</span> \
+              <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">factor</span><span class="p">,</span><span class="n">factor</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">new_image</span></code></pre></div>
+
+<h2 id="representation-spiral-architecture">Representation: Spiral Architecture</h2>
+
+<p>Now that we have described how to convert square pixels to hexagonal pixels,  a way of referencing the latter is needed.
+Again, multiple propositions have been advanced during the years<sup id="fnref:fn2"><a href="#fn:fn2" class="footnote">3</a></sup>, as for example</p>
+
+<ul>
+  <li>Offset addressing</li>
+  <li>Orthogonal addressing</li>
+  <li>3D addressing</li>
+  <li>Hexagonal spiral honeycomb mosaic</li>
+</ul>
+
+<p>The first three are essentially extensions or adaptations of what is done in the case of square pixels, and are thus very efficient in associating to each index the corresponding position on the image and vice-versa.
+The last one, on which we focus, is a completely different approach heavily oriented on optimizing the computations needed for the two natural geometrical operations on the honeycomb lattice: translation and rotation.</p>
+
+<h2 id="construction-of-the-spiral-honeycomb-mosaic">Construction of the spiral honeycomb mosaic</h2>
+
+<p>Usually square pixeled images are composed of $2^{2n}$ pixels.
+One could generate iteratively these square grids, starting from the fundamental element composed of 4 cells arranged in a square, as follows:</p>
+
+<ol>
+  <li>If $n=1$ the construction is completed by identifying each cell with a pixel.</li>
+  <li>If $n&gt;1$, replacing each cell with another fundamental element (see the animation).</li>
+  <li>Repeat the above procedure $n-1$ times, and then identify the cells with the pixels.</li>
+</ol>
+
+<p><img src="../../../assets/images/spiral-square.gif" alt="Iterative construction of the square grid" />
+<!-- ![Fundamental element for a square grid](../../../assets/images/spiral-fundamental-square.png) 
+ --></p>
+
+<p>By enumerating the cells of the fundamental grid from $0$ to $3$ and assigning to each pixel the sequence of cells in which at each step it is contained, we can index the complete grid by means of a single coordinate $x$ expressed in base 4 and with exactly $n$ digits.</p>
+
+<p>In the case of square pixels, this representation does not yield many advantages over the natural matrix indexing while complicating the intuition of a human programmer.
+On the other hand, we now show that the same procedure applied to hexagonal pixels, called spiral architecture, allows to encode the translation and rotation operations as simple operations on the spiral indexes of the pixels.
+Obviously this fact has many interesting applications in image processing.</p>
+
+<p>To define a spiral honeycomb mosaic, we let the fundamental element to be composed of 7 hexagons: a center and the 6 adjacent ones.</p>
+
+<p><img src="../../../assets/images/spiral-fundamental.png" alt="Fundamental element for a SHM" /></p>
+
+<p>We then proceed as above, iteratively, to augment the number of pixels until getting to the desired hexagonal grid of $7^n$ pixels as shown in this animation.</p>
+
+<p><img src="../../../assets/images/spiral.gif" alt="Iterative construction of a SHM" /></p>
+
+<p>Some remarks:</p>
+
+<ul>
+  <li>The fundamental element is not hexagonal, thus at each step we obtain slightly different boundaries. Moreover, in order to fit the previous grid, we are forced to slightly tilt the newly obtained grid constructing a sort of spiral.</li>
+  <li>Pixels in a SHM are indexed by numbers in base $7$</li>
+  <li>Spiral honeycomb mosaics are, by construction, roughly circular. Thus when representing an image as a SHM we usually disregard what happens at the corners. Look at the following example of the biggest SHM embeddable in a 256x256 image: <img src="../../../assets/images/spiral_arch.png" alt="SHM" /></li>
+</ul>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>In this post we explained how to simulate hexagonal pixels and how to build a spiral honeycomb mosaic to index them.
+In the next posts we will talk about</p>
+
+<ul>
+  <li>How to recover the hyperpel associated with a spiral index.</li>
+  <li>The operations of spiral addition and multiplication associated with the spiral honeycomb mosaic and their geometric significance.</li>
+  <li>How to expoit these operations to implement fast algorithm for rotating images.</li>
+</ul>
+
+<div class="footnotes">
+  <ol>
+    <li id="fn:fn">
+      <p>“Spiral architecture for machine vision”, PhD Thesis <a href="https://opus.lib.uts.edu.au/research/handle/2100/280">https://opus.lib.uts.edu.au/research/handle/2100/280</a> <a href="#fnref:fn" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:fn3">
+      <p>See for example “A New Simulation of Spiral Architecture”, by X. He, T. Hintz, Q. Wu, H. Wang and W. Jia. <a href="#fnref:fn3" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:fn2">
+      <p>For a review see “Hexagonal structure for intelligent vision”, X. He and W. Jia, in Proc. 1st Int. Conf. Inf. Commun. Technol. ICICT 2005 (2005), pp. 52–64. <a href="#fnref:fn2" class="reversefootnote">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+        	<!-- If we want to display author's name and bio -->
+            
+                <section class="author">
+                	<header> <a href="/blog"> <img class="profile" src="/blog/assets/images/avatar.jpg" alt="Dario Prandi"></a></header>
+                	<article>
+                		<!-- Author Name -->
+                    	<h4> Dario Prandi </h4>
+                    	<!-- Author Bio -->
+                    	<p> 
+						  Mathematician & Computer Science enthusiast
+                    		<!-- Here goes the author description. You might want to place some links too in here -->
+                    	</p>
+                    </article>
+                </section>                
+            
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="http://twitter.com/share?text=Spiral Architecture - part 1&amp;url=/2015/01/25/spiral-architecture.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=/2015/01/25/spiral-architecture.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=/2015/01/25/spiral-architecture.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+            
+            
+            <section class="disqus">
+            	<div id="disqus_thread"></div>
+            	<script type="text/javascript">
+
+            	    var disqus_shortname = 'asetofzeromeasure'; 
+            		var disqus_developer = 0; // developer mode is on
+            	    (function() {
+            	        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            	        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            	        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            	    })();
+            	</script>
+            	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+            	<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+            </section>
+            
+        	
+        </footer>
+
+    </article>
+
+</main>
+
+
+    <footer class="site-footer">
+        <a class="subscribe icon-feed" href="/blogrss.xml"><span class="tooltip">Subscribe!</span></a>
+        <div class="inner">
+             <section class="copyright">All content copyright <a href="/blog">A set of measure zero</a> &copy;  &bull; All rights reserved.</section>
+             <section class="poweredby">Made with Jekyll using <a href="http://github.com/rosario/kasper">Kasper theme</a></section>
+        </div>
+    </footer>
+
+    
+    <script type="text/javascript" src="/blog//assets/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/blog//assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/blog//assets/js/index.js"></script>
+
+    <!-- Google Analytics Tracking code -->
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-XXXXXXXX-X']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>   
+
+<!-- Math enviroment -->
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+</script>
+
+
+</body>
+</html>
